@@ -1,14 +1,12 @@
 #!/bin/bash
 
-set -e
-
 function usage {
 	echo "Usage: $PROGNAME <local-path> <remote-path>" 1>&2
 	echo "   eg: $PROGNAME /data s3://bucket/dir" 1>&2
 }
 
 function error_exit {
-	echo "${PROGNAME}: ${1:-"Unknown Error"}" 1>&2
+	echo "${1:-"Unknown Error"}" 1>&2
 	exit 1
 }
 
@@ -35,8 +33,18 @@ function restore {
 function backup {
   echo "backup $LOCAL => $REMOTE"
   if ! s3cmd --access_key="$ACCESS_KEY" --secret_key="$SECRET_KEY" sync --delete-removed "$LOCAL/" "$REMOTE/"; then
-    error_exit "backup failed"
+    echo "backup failed" 1>&2
+    return 1
   fi
+}
+
+function final_backup {
+  echo "backup $LOCAL => $REMOTE"
+  while ! s3cmd --access_key="$ACCESS_KEY" --secret_key="$SECRET_KEY" sync --delete-removed "$LOCAL/" "$REMOTE/"; do
+    echo "backup failed" 1>&2
+    sleep 1
+  done
+  exit 0
 }
 
 function idle {
@@ -49,8 +57,7 @@ function idle {
 
 restore
 
-trap backup SIGHUP SIGINT SIGTERM
+trap final_backup SIGHUP SIGINT SIGTERM
 trap "backup; idle" USR1
 
 idle
-
