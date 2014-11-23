@@ -1,8 +1,16 @@
 #!/bin/bash
 
+[[ "$TRACE" ]] && set -x
+
 function usage {
-	echo "Usage: $PROGNAME <local-path> <remote-path>" 1>&2
-	echo "   eg: $PROGNAME /data s3://bucket/dir" 1>&2
+	cat <<-EOF
+	Usage: $PROGNAME [OPTIONS] <local-path> <remote-path>
+	Sync s3 directory locally and backup changed files on exit
+
+	  --force-restore      restore even if local directory is not empty
+
+	   eg: $PROGNAME /data s3://bucket/dir
+	EOF
 }
 
 function error_exit {
@@ -10,18 +18,42 @@ function error_exit {
 	exit 1
 }
 
-if [ $# != "2" ]; then
-	usage
-  error_exit "not enough arguments"
+PARSED_OPTIONS=$(getopt -n "$0" -o f --long "force-restore" -- "$@")
+if [ $? -ne 0 ];
+then
+  exit 1
 fi
+eval set -- "$PARSED_OPTIONS"
+
+while true;
+do
+  case "$1" in
+		-f|--force-restore)
+      FORCE_RESTORE="true"
+      shift;;
+
+    --)
+      shift
+      break;;
+  esac
+done
 
 PROGNAME=$0
 LOCAL=$1
 REMOTE=$2
 
+echo "$# $LOCAL $REMOTE $FORCE_RESTORE"
+
+if [ $# != "2" ]; then
+	usage
+	error_exit "not enough arguments"
+fi
+
 function restore {
   if [ "$(ls -A $LOCAL)" ]; then
-    error_exit "local directory is not empty"
+		if [[ ${FORCE_RESTORE:false} == 'true' ]]; then
+    	error_exit "local directory is not empty"
+		fi
   fi
 
   echo "restoring $REMOTE => $LOCAL"
