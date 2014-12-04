@@ -42,13 +42,6 @@ PROGNAME=$0
 LOCAL=$1
 REMOTE=$2
 
-echo "$# $LOCAL $REMOTE $FORCE_RESTORE"
-
-if [ $# != "2" ]; then
-	usage
-	error_exit "not enough arguments"
-fi
-
 function restore {
   if [ "$(ls -A $LOCAL)" ]; then
 		if [[ ${FORCE_RESTORE:false} == 'true' ]]; then
@@ -57,14 +50,14 @@ function restore {
   fi
 
   echo "restoring $REMOTE => $LOCAL"
-  if ! s3cmd --access_key="$ACCESS_KEY" --secret_key="$SECRET_KEY" sync "$REMOTE/" "$LOCAL/"; then
+  if ! aws s3 sync "$REMOTE" "$LOCAL"; then
     error_exit "restore failed"
   fi
 }
 
 function backup {
   echo "backup $LOCAL => $REMOTE"
-  if ! s3cmd --access_key="$ACCESS_KEY" --secret_key="$SECRET_KEY" sync --delete-removed "$LOCAL/" "$REMOTE/"; then
+  if ! aws s3 sync "$LOCAL" "$REMOTE"; then
     echo "backup failed" 1>&2
     return 1
   fi
@@ -72,7 +65,7 @@ function backup {
 
 function final_backup {
   echo "backup $LOCAL => $REMOTE"
-  while ! s3cmd --access_key="$ACCESS_KEY" --secret_key="$SECRET_KEY" sync --delete-removed "$LOCAL/" "$REMOTE/"; do
+  while ! aws s3 sync "$LOCAL" "$REMOTE"; do
     echo "backup failed" 1>&2
     sleep 1
   done
