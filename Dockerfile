@@ -1,7 +1,7 @@
-FROM ubuntu:14.04
+FROM alpine:3.1
 MAINTAINER Dave Newman <dave@assembly.com>
 
-RUN apt-get update && apt-get install -y awscli
+RUN apk add --update py-pip && pip install awscli
 ADD watch /watch
 
 VOLUME /data
