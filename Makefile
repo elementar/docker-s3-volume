@@ -1,4 +1,4 @@
-NAME = whatupdave/s3-volume
+NAME = elementar/s3-volume
 
 .PHONY: build release
 
