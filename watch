@@ -3,32 +3,30 @@
 [[ "$TRACE" ]] && set -x
 
 function usage {
-	cat <<-EOF
+cat <<-EOF
 	Usage: $PROGNAME [OPTIONS] <local-path> <remote-path>
 	Sync s3 directory locally and backup changed files on exit
 
 	  --force-restore      restore even if local directory is not empty
 
 	   eg: $PROGNAME /data s3://bucket/dir
-	EOF
+EOF
 }
 
 function error_exit {
-	echo "${1:-"Unknown Error"}" 1>&2
-	exit 1
+  echo "${1:-"Unknown Error"}" 1>&2
+  exit 1
 }
 
 PARSED_OPTIONS=$(getopt -n "$0" -o f --long "force-restore" -- "$@")
-if [ $? -ne 0 ];
-then
+if [ $? -ne 0 ]; then
   exit 1
 fi
 eval set -- "$PARSED_OPTIONS"
 
-while true;
-do
+while true; do
   case "$1" in
-		-f|--force-restore)
+    -f|--force-restore)
       FORCE_RESTORE="true"
       shift;;
 
@@ -44,9 +42,9 @@ REMOTE=$2
 
 function restore {
   if [ "$(ls -A $LOCAL)" ]; then
-		if [[ ${FORCE_RESTORE:false} == 'true' ]]; then
-    	error_exit "local directory is not empty"
-		fi
+    if [[ ${FORCE_RESTORE:false} == 'true' ]]; then
+      error_exit "local directory is not empty"
+    fi
   fi
 
   echo "restoring $REMOTE => $LOCAL"
@@ -75,8 +73,9 @@ function final_backup {
 function idle {
   echo "ready"
   while true; do
-    sleep 42 &
+    sleep ${BACKUP_INTERVAL:-42} &
     wait $!
+    [ -n "$BACKUP_INTERVAL" ] && backup
   done
 }
 
