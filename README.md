@@ -3,6 +3,10 @@ docker-s3-volume
 
 Creates a Docker container that is restored and backed up to a directory on s3. You could use this to run short lived processes that work with and persist data to and from S3.
 
+Forked from: https://github.com/whatupdave/docker-s3-volume
+
+Modified to pass all inputs as environment variables and to use Docker Compose
+
 Usage:
 
 Copy config-sample.env to config.env and edit with your info
