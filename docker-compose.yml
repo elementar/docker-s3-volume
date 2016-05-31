@@ -1,0 +1,5 @@
+version: '2'
+services:
+  s3:
+    build: ./
+    env_file: config.env

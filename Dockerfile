@@ -1,8 +1,10 @@
-FROM ubuntu:14.04
-MAINTAINER Dave Newman <dave@assembly.com>
+FROM alpine:3.3
+MAINTAINER Kristofor Carle <kris@maphubs.com>
 
-RUN apt-get update && apt-get install -y awscli
+RUN apk add --update bash py-pip && pip install awscli
 ADD watch /watch
+
+RUN mkdir ~/.aws
 
 VOLUME /data
 

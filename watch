@@ -1,46 +1,29 @@
 #!/bin/bash
 
+
+
 [[ "$TRACE" ]] && set -x
 
-function usage {
-	cat <<-EOF
-	Usage: $PROGNAME [OPTIONS] <local-path> <remote-path>
-	Sync s3 directory locally and backup changed files on exit
 
-	  --force-restore      restore even if local directory is not empty
+cat <<EOF >~/.aws/credentials
+[default]
+aws_access_key_id=${ACCESS_KEY}
+aws_secret_access_key=${SECRET_KEY}
+EOF
 
-	   eg: $PROGNAME /data s3://bucket/dir
-	EOF
-}
+cat <<EOF >~/.aws/config
+[default]
+region=us-east-1
+output=json
+EOF
 
 function error_exit {
 	echo "${1:-"Unknown Error"}" 1>&2
 	exit 1
 }
 
-PARSED_OPTIONS=$(getopt -n "$0" -o f --long "force-restore" -- "$@")
-if [ $? -ne 0 ];
-then
-  exit 1
-fi
-eval set -- "$PARSED_OPTIONS"
-
-while true;
-do
-  case "$1" in
-		-f|--force-restore)
-      FORCE_RESTORE="true"
-      shift;;
-
-    --)
-      shift
-      break;;
-  esac
-done
-
-PROGNAME=$0
-LOCAL=$1
-REMOTE=$2
+LOCAL=$LOCAL_PATH
+REMOTE=$S3_PATH
 
 function restore {
   if [ "$(ls -A $LOCAL)" ]; then
