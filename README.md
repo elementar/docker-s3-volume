@@ -7,7 +7,7 @@ Usage:
 
     docker run -it --rm \
       -e AWS_ACCESS_KEY_ID=... -e AWS_SECRET_ACCESS_KEY=... -e BACKUP_INTERVAL=... \
-      whatupdave/s3-volume s3://<BUCKET>/<PATH>
+      elementar/s3-volume s3://<BUCKET>/<PATH>
 
 This pulls down the contents of a directory on S3. If the container is stopped or sent a `USR1` signal,
 it will backup the modified local contents to S3.
