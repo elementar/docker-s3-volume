@@ -79,7 +79,7 @@ You can use `docker-compose` for that:
 version: "2"
 
 volumes:
-  s3vol:
+  s3data:
     driver: local
 
 services:
@@ -87,11 +87,11 @@ services:
     image: elementar/s3-volume
     command: s3://mybucket/someprefix
     volumes:
-      - s3vol:/data
+      - s3data:/data
   db:
     image: postgres
     volumes:
-      - s3vol:/var/lib/postgresql/data
+      - s3data:/var/lib/postgresql/data
 ```
 
 ## Contributing
