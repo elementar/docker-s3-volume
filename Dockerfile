@@ -1,7 +1,7 @@
-FROM alpine:3.1
-MAINTAINER Dave Newman <dave@assembly.com>
+FROM alpine:3.6
+MAINTAINER Elementar Sistemas <contato@elementarsistemas.com.br>
 
-RUN apk add --update bash py-pip && pip install awscli
+RUN apk --no-cache add bash py-pip && pip install awscli
 ADD watch /watch
 
 VOLUME /data
