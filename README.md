@@ -3,14 +3,118 @@
 Creates a Docker container that is restored and backed up to a directory on s3.
 You could use this to run short lived processes that work with and persist data to and from S3.
 
-Usage:
+## Usage
 
-    docker run -it --rm \
-      -e AWS_ACCESS_KEY_ID=... -e AWS_SECRET_ACCESS_KEY=... -e BACKUP_INTERVAL=... \
-      elementar/s3-volume s3://<BUCKET>/<PATH>
+For the simplest usage, you can just start the data container:
 
-This pulls down the contents of a directory on S3. If the container is stopped or sent a `USR1` signal,
-it will backup the modified local contents to S3.
+```bash
+docker run -d --name my-data-container \
+           elementar/s3-volume s3://mybucket/someprefix
+```
 
-If you supply a `BACKUP_INTERVAL` environment variable, a backup will be issued each interval. The value can
-be specified in seconds, minutes, hours or days (adding `s`, `m`, `h` or `d` as suffix).
+This will download the data from the S3 location you specify into the
+container's `/data` directory. When the container shuts down, the data will be
+synced back to S3.
+
+To use the data from another container, you can use the `--volumes-from` option:
+
+```bash
+docker run -it --rm --volumes-from=my-data-container busybox ls -l /data
+```
+
+### Configuring a sync interval
+
+When the `BACKUP_INTERVAL` environment variable is set, a watcher process will
+sync the `/data` directory to S3 on the interval you specify. The interval can
+be specified in seconds, minutes, hours or days (adding `s`, `m`, `h` or `d` as
+the suffix):
+
+```bash
+docker run -d --name my-data-container -e BACKUP_INTERVAL=2m \
+           elementar/s3-volume s3://mybucket/someprefix
+```
+
+### Configuring credentials
+
+If you are running on EC2, IAM role credentials should just work. Otherwise,
+you can supply credential information using environment variables:
+
+```bash
+docker run -d --name my-data-container \
+           -e AWS_ACCESS_KEY_ID=... -e AWS_SECRET_ACCESS_KEY=... \
+           elementar/s3-volume s3://mybucket/someprefix
+```
+
+Any environment variable available to the `aws-cli` command can be used. see
+http://docs.aws.amazon.com/cli/latest/userguide/cli-environment.html for more
+information.
+
+### Forcing a sync
+
+A final sync will always be performed on container shutdown. A sync can be
+forced by sending the container the `USR1` signal:
+
+```bash
+docker kill --signal=USR1 my-data-container
+```
+
+### Forcing a restoration
+
+The first time the container is ran, it will fetch the contents of the S3
+location to initialize the `/data` directory. If you want to force an initial
+sync again, you can run the container again with the `--force-restore` option:
+
+```bash
+docker run -d --name my-data-container \
+           elementar/s3-volume --force-restore s3://mybucket/someprefix
+```
+
+### Using Compose and named volumes
+
+Most of the time, you will use this image to sync data for another container.
+You can use `docker-compose` for that:
+
+```yaml
+# docker-compose.yaml
+version: "2"
+
+volumes:
+  s3vol:
+    driver: local
+
+services:
+  s3vol:
+    image: elementar/s3-volume
+    command: s3://mybucket/someprefix
+    volumes:
+      - s3vol:/data
+  db:
+    image: postgres
+    volumes:
+      - s3vol:/var/lib/postgresql/data
+```
+
+## Contributing
+
+1. Fork it!
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
+5. Submit a pull request :D
+
+## Credits
+
+Original Developer - Dave Newman (@whatupdave)
+Current Maintainer - Fábio Batista (@fabiob)
+
+## License
+
+The MIT License (MIT)
+
+Copyright (c) 2015 Chris Kibble
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
