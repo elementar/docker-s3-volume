@@ -9,7 +9,7 @@ For the simplest usage, you can just start the data container:
 
 ```bash
 docker run -d --name my-data-container \
-           elementar/s3-volume s3://mybucket/someprefix
+           elementar/s3-volume /data s3://mybucket/someprefix
 ```
 
 This will download the data from the S3 location you specify into the
@@ -31,7 +31,7 @@ the suffix):
 
 ```bash
 docker run -d --name my-data-container -e BACKUP_INTERVAL=2m \
-           elementar/s3-volume s3://mybucket/someprefix
+           elementar/s3-volume /data s3://mybucket/someprefix
 ```
 
 ### Configuring credentials
@@ -42,7 +42,7 @@ you can supply credential information using environment variables:
 ```bash
 docker run -d --name my-data-container \
            -e AWS_ACCESS_KEY_ID=... -e AWS_SECRET_ACCESS_KEY=... \
-           elementar/s3-volume s3://mybucket/someprefix
+           elementar/s3-volume /data s3://mybucket/someprefix
 ```
 
 Any environment variable available to the `aws-cli` command can be used. see
@@ -66,7 +66,7 @@ sync again, you can run the container again with the `--force-restore` option:
 
 ```bash
 docker run -d --name my-data-container \
-           elementar/s3-volume --force-restore s3://mybucket/someprefix
+           elementar/s3-volume --force-restore /data s3://mybucket/someprefix
 ```
 
 ### Using Compose and named volumes
@@ -85,7 +85,7 @@ volumes:
 services:
   s3vol:
     image: elementar/s3-volume
-    command: s3://mybucket/someprefix
+    command: /data s3://mybucket/someprefix
     volumes:
       - s3data:/data
   db:
