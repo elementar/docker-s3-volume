@@ -33,6 +33,14 @@ the suffix):
 docker run -d --name my-data-container -e BACKUP_INTERVAL=2m \
            elementar/s3-volume /data s3://mybucket/someprefix
 ```
+### Sync directionality
+
+By default the sync is one way, aside from the initial restore where 
+local volume is restored from s3 on startup.
+Subsequent syncs will be from the local volume to S3, clobbering any changes that
+occurred on the S3 afterwards.  In order to enable two way syncing, set the 
+`RESTORE_ON_BACKUP` env var to true. New changes on the S3 will be pulled locally
+then any local changes will be pushed back to S3.
 
 ### Configuring credentials
 
@@ -93,6 +101,9 @@ services:
     volumes:
       - s3data:/var/lib/postgresql/data
 ```
+
+
+
 
 ## Contributing
 

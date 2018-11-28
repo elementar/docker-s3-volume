@@ -54,6 +54,9 @@ function restore {
 }
 
 function backup {
+  if [ "${RESTORE_ON_BACKUP}" != "" ]; then
+    restore
+  fi
   echo "backup $LOCAL => $REMOTE"
   if ! aws s3 sync "$LOCAL" "$REMOTE" --delete; then
     echo "backup failed" 1>&2
