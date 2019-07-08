@@ -1,4 +1,5 @@
 #!/bin/bash
+aws configure set s3.signature_version s3v4
 
 [[ "$TRACE" ]] && set -x
 
