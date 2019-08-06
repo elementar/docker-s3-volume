@@ -49,6 +49,15 @@ Any environment variable available to the `aws-cli` command can be used. see
 http://docs.aws.amazon.com/cli/latest/userguide/cli-environment.html for more
 information.
 
+### Configuring an endpoint URL
+
+If you are using an S3-compatible service (such as Oracle OCI Object Storage), you may want to set the service's endpoint URL:
+
+```bash
+docker run -d --name my-data-container -e ENDPOINT_URL=... \
+           elementar/s3-volume /data s3://mybucket/someprefix
+```
+
 ### Forcing a sync
 
 A final sync will always be performed on container shutdown. A sync can be
