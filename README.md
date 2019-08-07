@@ -1,5 +1,7 @@
 # docker-s3-volume
 
+[![](https://images.microbadger.com/badges/image/elementar/s3-volume.svg)](https://microbadger.com/images/elementar/s3-volume "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/elementar/s3-volume.svg)](https://microbadger.com/images/elementar/s3-volume "Get your own version badge on microbadger.com")
+
 Creates a Docker container that is restored and backed up to a directory on s3.
 You could use this to run short lived processes that work with and persist data to and from S3.
 
