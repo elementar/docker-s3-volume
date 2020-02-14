@@ -6,5 +6,6 @@ ADD watch /watch
 
 VOLUME /data
 
+ENV DELETE_FLAG "--delete"
 ENTRYPOINT [ "./watch" ]
 CMD ["/data"]
