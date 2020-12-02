@@ -1,10 +1,10 @@
 # docker-s3-volume
 
-![Docker Build Status](https://img.shields.io/docker/build/elementar/s3-volume?style=plastic)
-![Docker Layers Count](https://img.shields.io/microbadger/layers/elementar/s3-volume?style=plastic)
-![Docker Version](https://img.shields.io/docker/v/elementar/s3-volume?style=plastic)
-![Docker Pull Count](https://img.shields.io/docker/pulls/elementar/s3-volume?style=plastic)
-![Docker Stars](https://img.shields.io/docker/stars/elementar/s3-volume?style=plastic)
+[![Docker Build Status](https://img.shields.io/docker/build/elementar/s3-volume?style=plastic)](https://hub.docker.com/r/elementar/s3-volume)
+[![Docker Layers Count](https://img.shields.io/microbadger/layers/elementar/s3-volume?style=plastic)](https://hub.docker.com/r/elementar/s3-volume)
+[![Docker Version](https://img.shields.io/docker/v/elementar/s3-volume?style=plastic)](https://hub.docker.com/r/elementar/s3-volume)
+[![Docker Pull Count](https://img.shields.io/docker/pulls/elementar/s3-volume?style=plastic)](https://hub.docker.com/r/elementar/s3-volume)
+[![Docker Stars](https://img.shields.io/docker/stars/elementar/s3-volume?style=plastic)](https://hub.docker.com/r/elementar/s3-volume)
 
 Creates a Docker container that is restored and backed up to a directory on s3.
 You could use this to run short lived processes that work with and persist data to and from S3.
