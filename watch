@@ -9,6 +9,9 @@ cat <<-EOF
 
 	  --force-restore      restore even if local directory is not empty
 
+	  --archive            disable initial restore and do not delete
+	                       remote content that's missing locally
+
 	   eg: $PROGNAME /data s3://bucket/dir
 EOF
 }
@@ -18,7 +21,7 @@ function error_exit {
   exit 1
 }
 
-PARSED_OPTIONS=$(getopt -n "$0" -o f --long "force-restore" -- "$@")
+PARSED_OPTIONS=$(getopt -n "$0" -o fa --long "force-restore,archive" -- "$@")
 if [ $? -ne 0 ]; then
   exit 1
 fi
@@ -28,6 +31,10 @@ while true; do
   case "$1" in
     -f|--force-restore)
       FORCE_RESTORE="true"
+      shift;;
+
+    -a|--archive)
+      ARCHIVE="true"
       shift;;
 
     --)
@@ -46,6 +53,12 @@ else
   AWS=aws
 fi
 
+if [ ${ARCHIVE:false} == 'true' ]; then
+  DELETE="--delete"
+else
+  DELETE=
+fi
+
 function restore {
   if [ "$(ls -A $LOCAL)" ]; then
     if [[ ${FORCE_RESTORE:false} == 'true' ]]; then
@@ -61,7 +74,7 @@ function restore {
 
 function backup {
   echo "backup $LOCAL => $REMOTE"
-  if ! $AWS s3 sync "$LOCAL" "$REMOTE" --delete; then
+  if ! $AWS s3 sync "$LOCAL" "$REMOTE" $DELETE; then
     echo "backup failed" 1>&2
     return 1
   fi
@@ -69,7 +82,7 @@ function backup {
 
 function final_backup {
   echo "backup $LOCAL => $REMOTE"
-  while ! $AWS s3 sync "$LOCAL" "$REMOTE" --delete; do
+  while ! $AWS s3 sync "$LOCAL" "$REMOTE" $DELETE; do
     echo "backup failed, will retry" 1>&2
     sleep 1
   done
@@ -85,7 +98,9 @@ function idle {
   done
 }
 
-restore
+if [ ${ARCHIVE:false} == 'false' -o ${FORCE_RESTORE:false} == 'true' ]; then
+     restore
+fi
 
 trap final_backup SIGHUP SIGINT SIGTERM
 trap "backup; idle" USR1
