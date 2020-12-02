@@ -6,6 +6,6 @@ ADD watch /watch
 
 VOLUME /data
 
-ENV DELETE_FLAG "--delete"
+ENV S3_SYNC_FLAGS "--delete"
 ENTRYPOINT [ "./watch" ]
 CMD ["/data"]
