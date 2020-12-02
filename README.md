@@ -80,6 +80,9 @@ docker run -d --name my-data-container \
            elementar/s3-volume --force-restore /data s3://mybucket/someprefix
 ```
 
+### Deletion and sync
+By default if there are files that are deleted in your local file system, those will be deleted remotely.   If you wish to turn this off set the environment variable S3_SYNC_FLAGS=":
+
 ### Using Compose and named volumes
 
 Most of the time, you will use this image to sync data for another container.
