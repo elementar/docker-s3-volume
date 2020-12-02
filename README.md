@@ -80,6 +80,13 @@ docker run -d --name my-data-container \
            elementar/s3-volume --force-restore /data s3://mybucket/someprefix
 ```
 
+### Running in archive mode
+
+If the `--archive` option is set, the container will run without performing an
+initial restore, even if the data directory is empty. Additionally, running in
+archive mode disables the delete flag on aws s3 sync requests, so remote content
+will not be deleted even if it is not present locally.
+
 ### Using Compose and named volumes
 
 Most of the time, you will use this image to sync data for another container.
