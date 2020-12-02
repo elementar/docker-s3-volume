@@ -1,6 +1,10 @@
 # docker-s3-volume
 
-[![](https://images.microbadger.com/badges/image/elementar/s3-volume.svg)](https://microbadger.com/images/elementar/s3-volume "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/elementar/s3-volume.svg)](https://microbadger.com/images/elementar/s3-volume "Get your own version badge on microbadger.com")
+![Docker Build Status](https://img.shields.io/docker/build/elementar/s3-volume?style=plastic)
+![Docker Layers Count](https://img.shields.io/microbadger/layers/elementar/s3-volume?style=plastic)
+![Docker Version](https://img.shields.io/docker/v/elementar/s3-volume?style=plastic)
+![Docker Pull Count](https://img.shields.io/docker/pulls/elementar/s3-volume?style=plastic)
+![Docker Stars](https://img.shields.io/docker/stars/elementar/s3-volume?style=plastic)
 
 Creates a Docker container that is restored and backed up to a directory on s3.
 You could use this to run short lived processes that work with and persist data to and from S3.
