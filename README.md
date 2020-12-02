@@ -81,7 +81,12 @@ docker run -d --name my-data-container \
 ```
 
 ### Deletion and sync
-By default if there are files that are deleted in your local file system, those will be deleted remotely.   If you wish to turn this off set the environment variable S3_SYNC_FLAGS=":
+
+By default if there are files that are deleted in your local file system, those will be deleted remotely. If you wish to turn this off, set the environment variable `S3_SYNC_FLAGS` to an empty string:
+
+```bash
+docker run -d -e S3_SYNC_FLAGS="" elementar/s3-volume /data s3://mybucket/someprefix
+```
 
 ### Using Compose and named volumes
 
