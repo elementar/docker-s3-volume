@@ -6,6 +6,9 @@ ADD watch /watch
 
 VOLUME /data
 
+HEALTHCHECK --interval=2s --retries=300 \
+	CMD stat /var/healthy.txt || exit 1
+
 ENV S3_SYNC_FLAGS "--delete"
 ENTRYPOINT [ "./watch" ]
 CMD ["/data"]

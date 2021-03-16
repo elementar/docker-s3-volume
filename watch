@@ -39,6 +39,7 @@ done
 PROGNAME=$0
 LOCAL=$1
 REMOTE=$2
+HEALTHCHECK_FILE=/var/healthy.txt
 
 if [ "$ENDPOINT_URL" ]; then
   AWS="aws --endpoint-url $ENDPOINT_URL"
@@ -57,14 +58,17 @@ function restore {
   if ! $AWS s3 sync "$REMOTE" "$LOCAL"; then
     error_exit "restore failed"
   fi
+  touch $HEALTHCHECK_FILE
 }
 
 function backup {
   echo "backup $LOCAL => $REMOTE"
   if ! $AWS s3 sync "$LOCAL" "$REMOTE" $S3_SYNC_FLAGS; then
     echo "backup failed" 1>&2
+    rm $HEALTHCHECK_FILE
     return 1
   fi
+  touch $HEALTHCHECK_FILE
 }
 
 function final_backup {
